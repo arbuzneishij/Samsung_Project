@@ -34,21 +34,21 @@ public class MainActivity extends AppCompatActivity {
                 Intent i = new Intent(MainActivity.this, AppChooserActivity.class);
                 startActivity(i);
             } else {
-
+                ButtonFounder.openApp(MainActivity.this, savedPkg);
                 // Проверяем разрешение на overlay (плавающая кнопка)
-                if (Settings.canDrawOverlays(this)) {
-
-                    // Запускаем сервис плавающей кнопки
-                    //startService(new Intent(this, FloatingButtonService.class));
-
-                    // Открываем выбранное приложение
-                    ButtonFounder.openApp(MainActivity.this, savedPkg);
-
-                } else {
-                    // Запрашиваем разрешение
-                    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
-                    startActivity(intent);
-                }
+                //if (Settings.canDrawOverlays(this)) {
+                    //
+                    //    // Запускаем сервис плавающей кнопки
+                    //    //startService(new Intent(this, FloatingButtonService.class));
+                    //
+                    //    // Открываем выбранное приложение
+                    //    ButtonFounder.openApp(MainActivity.this, savedPkg);
+                    //
+                    //} else {
+                    //    // Запрашиваем разрешение
+                    //    Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
+                    //    startActivity(intent);
+                    //}
             }
         });
 
@@ -74,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // Останавливаем сервис при возврате
-        stopService(new Intent(this, FloatingButtonService.class));
+        //stopService(new Intent(this, FloatingButtonService.class));
 
         // Обновляем кнопку (например после выбора приложения)
         updateButtonText();
