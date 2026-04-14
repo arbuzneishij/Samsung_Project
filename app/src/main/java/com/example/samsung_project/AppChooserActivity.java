@@ -20,6 +20,8 @@ public class AppChooserActivity extends AppCompatActivity {
         String packageName;  // package name (уникальный идентификатор)
         Drawable icon;       // иконка приложения
 
+
+
         AppItem(String label, String packageName, Drawable icon) {
             this.label = label;
             this.packageName = packageName;
@@ -76,21 +78,20 @@ public class AppChooserActivity extends AppCompatActivity {
         AppAdapter adapter = new AppAdapter(this, items);
         listView.setAdapter(adapter);
 
+        // получаем индекс кнопки
+        int buttonIndex = getIntent().getIntExtra("button_index", -1);
+
         // Обработка нажатия на элемент списка
         listView.setOnItemClickListener((parent, view, position, id) -> {
 
             AppItem selected = items.get(position);
 
-            // Сохраняем:
-            // 1. packageName (для запуска)
-            // 2. label (для отображения на кнопке)
             getSharedPreferences("prefs", MODE_PRIVATE)
                     .edit()
-                    .putString("saved_app", selected.packageName)
-                    .putString("saved_app_name", selected.label)
+                    .putString("saved_app_" + buttonIndex, selected.packageName)
+                    .putString("saved_app_name_" + buttonIndex, selected.label)
                     .apply();
 
-            // Закрываем экран выбора
             finish();
         });
     }
