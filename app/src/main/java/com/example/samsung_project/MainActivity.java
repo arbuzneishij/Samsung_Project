@@ -1,10 +1,12 @@
 package com.example.samsung_project;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
@@ -24,9 +26,6 @@ public class MainActivity extends AppCompatActivity {
         buttons[3] = findViewById(R.id.button4);
         buttons[4] = findViewById(R.id.button5);
         buttons[5] = findViewById(R.id.button6);
-
-        // Кнопка сброса
-        Button btnReset = findViewById(R.id.buttonReset);
 
         // Обновляем текст всех кнопок при запуске
         updateAllButtons();
@@ -55,28 +54,14 @@ public class MainActivity extends AppCompatActivity {
                     ButtonFounder.openApp(MainActivity.this, savedPkg);
                 }
             });
+
+            //Долгое нажатие
+            buttons[i].setOnLongClickListener(v -> {
+
+                showLongPressMenu(index);
+                return true;
+            });
         }
-
-        // Обработчик кнопки "Сброс"
-        btnReset.setOnClickListener(v -> {
-
-            // Получаем редактор SharedPreferences
-            var editor = getSharedPreferences("prefs", MODE_PRIVATE).edit();
-
-            // Удаляем данные всех 6 кнопок
-            for (int i = 0; i < 6; i++) {
-                editor.remove("saved_app_" + i);
-                editor.remove("saved_app_name_" + i);
-            }
-
-            editor.apply();
-
-            // Обновляем UI
-            updateAllButtons();
-
-            //создаём уведомление о сбросе всех кнопок
-            Toast.makeText(this, "Все кнопки сброшены", Toast.LENGTH_SHORT).show();
-        });
     }
 
     @Override
@@ -104,5 +89,60 @@ public class MainActivity extends AppCompatActivity {
                 buttons[i].setText("Кнопка " + (i + 1));
             }
         }
+    }
+    private void showLongPressMenu(int index) {
+
+        String[] options = {"Переименовать", "Сбросить"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("Настройки кнопки")
+                .setItems(options, (dialog, which) -> {
+
+                    if (which == 0) {
+                        // Переименование
+                        showRenameDialog(index);
+                    }
+
+                    if (which == 1) {
+                        // Сброс конкретной кнопки
+                        getSharedPreferences("prefs", MODE_PRIVATE)
+                                .edit()
+                                .remove("saved_app_" + index)
+                                .remove("saved_app_name_" + index)
+                                .apply();
+
+                        updateAllButtons();
+
+                        Toast.makeText(this, "Кнопка сброшена", Toast.LENGTH_SHORT).show();
+                    }
+                })
+                .show();
+    }
+
+    private void showRenameDialog(int index) {
+
+        EditText input = new EditText(this);
+        input.setHint("Введите название");
+
+        new AlertDialog.Builder(this)
+                .setTitle("Новое имя кнопки")
+                .setView(input)
+                .setPositiveButton("Сохранить", (dialog, which) -> {
+
+                    String newName = input.getText().toString();
+
+                    if (!newName.isEmpty()) {
+
+                        //Сохраняем новое имя
+                        getSharedPreferences("prefs", MODE_PRIVATE)
+                                .edit()
+                                .putString("saved_app_name_" + index, newName)
+                                .apply();
+
+                        updateAllButtons();
+                    }
+                })
+                .setNegativeButton("Отмена", null)
+                .show();
     }
 }
