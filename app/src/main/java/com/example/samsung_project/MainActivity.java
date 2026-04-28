@@ -19,6 +19,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+        Button btnSettings = findViewById(R.id.buttonSettings);
+
         // Привязываем кнопки из layout
         buttons[0] = findViewById(R.id.button1);
         buttons[1] = findViewById(R.id.button2);
@@ -62,6 +64,11 @@ public class MainActivity extends AppCompatActivity {
                 return true;
             });
         }
+
+        //Назначаем обработчик на кнопку настроек
+        btnSettings.setOnClickListener(v -> {
+            startActivity(new Intent(this, SettingsActivity.class));
+        });
     }
 
     @Override

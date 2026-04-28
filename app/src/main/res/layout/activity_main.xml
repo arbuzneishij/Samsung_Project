@@ -36,5 +36,10 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Открыть приложение"/>
+    <Button
+        android:id="@+id/buttonSettings"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="⚙" />
 
 </LinearLayout>
