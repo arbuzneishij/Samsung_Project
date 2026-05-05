@@ -1,52 +1,98 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:layout_height="match_parent">
 
-    <Button
-        android:id="@+id/btnVolume"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Громкость"
-        android:textSize="20sp"
-        android:padding="20dp"
-        android:layout_marginBottom="20dp" />
+        android:orientation="vertical"
+        android:padding="20dp">
 
-    <Button
-        android:id="@+id/btnBrightness"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Яркость"
-        android:textSize="20sp"
-        android:padding="20dp"
-        android:layout_marginBottom="20dp" />
+        <!-- ГРОМКОСТЬ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Громкость"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
 
-    <Button
-        android:id="@+id/btnThemes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Темы"
-        android:textSize="20sp"
-        android:padding="20dp"
-        android:layout_marginBottom="20dp" />
+        <Button
+            android:id="@+id/btnVolume"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Настройки громкости"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp" />
 
-    <Button
-        android:id="@+id/btnPermissions"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Разрешения"
-        android:textSize="20sp"
-        android:padding="20dp"
-        android:layout_marginBottom="20dp" />
+        <!-- ЯРКОСТЬ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Экран"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
 
-    <Button
-        android:id="@+id/btnHelp"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Помощь"
-        android:textSize="20sp"
-        android:padding="20dp" />
+        <Button
+            android:id="@+id/btnBrightness"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Яркость экрана"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp" />
 
-</LinearLayout>
+        <!-- ТЕМЫ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Темы"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnThemes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Выбор темы"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- РАЗРЕШЕНИЯ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Разрешения"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnPermissions"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Управление разрешениями"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp" />
+
+        <!-- ПОМОЩЬ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Помощь"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:paddingBottom="8dp"/>
+
+        <Button
+            android:id="@+id/btnHelp"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="О приложении / помощь"
+            android:padding="16dp"
+            android:layout_marginBottom="20dp" />
+
+    </LinearLayout>
+</ScrollView>

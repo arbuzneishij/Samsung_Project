@@ -7,12 +7,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.FrameLayout;
+import android.widget.ImageView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 public class MainActivity extends AppCompatActivity {
 
     // Массив для хранения 6 кнопок
     private Button[] buttons = new Button[6];
+
+
+    public static final int WIDGET_TIME = 0;
+    public static final int WIDGET_SPEED = 1;
+    public static final int WIDGET_IMAGE = 2;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,12 +71,19 @@ public class MainActivity extends AppCompatActivity {
                 showLongPressMenu(index);
                 return true;
             });
+
+            //выбор виджета
+            int widgetType = getSharedPreferences("prefs", MODE_PRIVATE)
+                    .getInt("widget_type", WIDGET_TIME);
+
+            showWidget(widgetType);
         }
 
         //Назначаем обработчик на кнопку настроек
         btnSettings.setOnClickListener(v -> {
             startActivity(new Intent(this, SettingsActivity.class));
         });
+
     }
 
     @Override
@@ -150,6 +165,79 @@ public class MainActivity extends AppCompatActivity {
                     }
                 })
                 .setNegativeButton("Отмена", null)
+                .show();
+    }
+
+    private void showWidget(int type) {
+
+        FrameLayout container = findViewById(R.id.widgetContainer);
+        container.removeAllViews();
+        container.setOnClickListener(v ->
+                Toast.makeText(this, "Удерживайте для выбора виджета", Toast.LENGTH_SHORT).show()
+        );
+        //часы
+        if (type == WIDGET_TIME) {
+            TextView clock = new TextView(this);
+            clock.setTextSize(32);
+
+            new android.os.Handler().postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    java.text.DateFormat timeFormat =
+                            java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT);
+                    clock.setText(timeFormat.format(new java.util.Date()));
+
+                    new android.os.Handler().postDelayed(this, 1000);
+                }
+            }, 0);
+
+            container.addView(clock);
+            container.setOnLongClickListener(v -> {
+                showWidgetChooser();
+                return true;
+            });
+        }
+
+        //спидометр
+        if (type == WIDGET_SPEED) {
+            TextView speed = new TextView(this);
+            speed.setTextSize(32);
+            speed.setText("0 км/ч");
+
+            // Потом добавить gps
+            container.addView(speed);
+        }
+
+        //логотип
+        if (type == WIDGET_IMAGE) {
+            ImageView img = new ImageView(this);
+            img.setImageResource(R.drawable.my_image);
+            img.setScaleType(ImageView.ScaleType.CENTER_CROP);
+
+            container.addView(img);
+        }
+
+        container.setOnLongClickListener(v -> {
+            showWidgetChooser();
+            return true;
+        });
+    }
+
+    private void showWidgetChooser() {
+
+        String[] options = {"Время", "Спидометр", "Картинка"};
+
+        new AlertDialog.Builder(this)
+                .setTitle("Выбери виджет")
+                .setItems(options, (dialog, which) -> {
+
+                    getSharedPreferences("prefs", MODE_PRIVATE)
+                            .edit()
+                            .putInt("widget_type", which)
+                            .apply();
+
+                    showWidget(which);
+                })
                 .show();
     }
 }

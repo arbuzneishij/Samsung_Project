@@ -20,12 +20,8 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.Samsung_Project">
-        <activity
-            android:name=".FloatingButtonService"
-            android:theme="@style/FloatingTheme"
-            android:excludeFromRecents="true"
-            android:taskAffinity=""
-            android:launchMode="singleInstance"/>
+        <activity android:name=".SettingsActivity" />
+
         <activity android:name=".AppChooserActivity" />
         <activity
             android:name=".MainActivity"
