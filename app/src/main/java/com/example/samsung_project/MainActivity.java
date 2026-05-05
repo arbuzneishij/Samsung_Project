@@ -172,9 +172,7 @@ public class MainActivity extends AppCompatActivity {
 
         FrameLayout container = findViewById(R.id.widgetContainer);
         container.removeAllViews();
-        container.setOnClickListener(v ->
-                Toast.makeText(this, "Удерживайте для выбора виджета", Toast.LENGTH_SHORT).show()
-        );
+
         //часы
         if (type == WIDGET_TIME) {
             TextView clock = new TextView(this);
