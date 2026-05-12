@@ -9,6 +9,9 @@
             <category android:name="android.intent.category.LAUNCHER" />
         </intent>
     </queries>
+
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <uses-permission android:name="android.permission.SYSTEM_ALERT_WINDOW"/>
 
     <application
@@ -21,7 +24,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Samsung_Project">
         <activity android:name=".SettingsActivity" />
-
+        <service
+            android:name=".FloatingButtonService"
+            android:exported="false"/>
         <activity android:name=".AppChooserActivity" />
         <activity
             android:name=".MainActivity"
