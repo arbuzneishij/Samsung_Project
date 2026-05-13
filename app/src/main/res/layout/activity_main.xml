@@ -2,48 +2,24 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:gravity="center"
-    android:orientation="vertical"
-    android:padding="20dp">
+    android:orientation="vertical">
 
-    <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Открыть приложение"/>
-    <Button
-        android:id="@+id/button2"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Открыть приложение"/>
-    <Button
-        android:id="@+id/button3"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Открыть приложение"/>
-    <Button
-        android:id="@+id/button4"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Открыть приложение"/>
-    <Button
-        android:id="@+id/button5"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Открыть приложение"/>
-    <Button
-        android:id="@+id/button6"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Открыть приложение"/>
-    <Button
-        android:id="@+id/buttonSettings"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="⚙" />
-    <FrameLayout
-        android:id="@+id/widgetContainer"
+    <fragment
+        android:id="@+id/home_screen"
+        android:name="com.example.samsung_project.HomeScreen"
         android:layout_width="match_parent"
-        android:layout_height="200dp"
-        android:layout_marginBottom="20dp"/>
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        tools:layout="@layout/fragment_screen"
+        tools:ignore="Suspicious0dp" />
+    <fragment
+        android:id="@+id/buttons" android:name="com.example.samsung_project.Buttons"
+        android:layout_width="match_parent"
+        android:layout_height="70dp"
+        tools:layout="@layout/fragment_buttons"/>
+
+
 </LinearLayout>
+
