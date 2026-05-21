@@ -7,6 +7,10 @@ import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.graphics.Typeface;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Location;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,6 +40,10 @@ import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.Locale;
 
 public class HomeScreen extends Fragment {
 
@@ -67,17 +75,28 @@ public class HomeScreen extends Fragment {
     private final Handler timeoutHandler = new Handler();
     private Runnable timeoutRunnable;
 
+    private TextView timeView;
+    private Handler timeHandler = new Handler();
+    private Runnable timeRunnable;
+
+    private TextView dateView;
+    private SensorManager sensorManager;
+    private Sensor accelerometer;
+    private Sensor magnetometer;
+    private float[] gravity = new float[3];
+    private float[] geomagnetic = new float[3];
+    private float azimuth = 0f;
+    private TextView compassTextView;
+    private boolean compassActive = false;
+    private SensorEventListener compassListener;
+
     @Override
     public View onCreateView(LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentScreenBinding.inflate(inflater, container, false);
 
-        // ================================
-        // GPS INIT
-        // ================================
+        // инициализация GPS
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(requireActivity());
-
-
 
         // Привязываем кнопки из layout
         buttons[0] = binding.button1;
@@ -87,6 +106,9 @@ public class HomeScreen extends Fragment {
         buttons[4] = binding.button5;
         buttons[5] = binding.button6;
 
+        timeView = binding.time;
+
+        dateView = binding.dateView;
         // Обновляем текст всех кнопок при запуске
         updateAllButtons();
 
@@ -115,6 +137,10 @@ public class HomeScreen extends Fragment {
                 return true;
             });
         }
+        //стартуем часы
+        startClock();
+
+        updateDate();
 
         // Показывает сохранённый виджет
         int widgetType = requireActivity()
@@ -142,13 +168,25 @@ public class HomeScreen extends Fragment {
 
         if (widgetType == WIDGET_SPEED) {
             startSpeedometer();
+        } else if (widgetType == WIDGET_TIME) {  // компас
+            startCompass();
         }
+
+        startClock();
     }
 
     @Override
     public void onPause() {
         super.onPause();
         stopSpeedometer();
+        stopCompass();
+        stopClock();
+    }
+
+    @Override
+    public void onDestroyView() {
+        super.onDestroyView();
+        stopClock();   // на всякий случай, чтобы избежать утечки
     }
 
     // Метод обновляет текст всех кнопок
@@ -211,37 +249,37 @@ public class HomeScreen extends Fragment {
     }
 
     // Показывает выбранный виджет
-    private void showWidget(int type) {
-        FrameLayout container = binding.widgetContainer;
-        container.removeAllViews();
+        private void showWidget(int type) {
+            FrameLayout container = binding.widgetContainer;
+            container.removeAllViews();
 
-        if (type == WIDGET_TIME) {
-            TextView clock = new TextView(requireContext());
-            clock.setTextSize(32);
-            new Handler().postDelayed(new Runnable() {
-                @Override
-                public void run() {
-                    java.text.DateFormat timeFormat =
-                            java.text.DateFormat.getTimeInstance(java.text.DateFormat.SHORT);
-                    clock.setText(timeFormat.format(new java.util.Date()));
-                    new Handler().postDelayed(this, 1000);
-                }
-            }, 0);
-            container.addView(clock);
-        }
+            stopSpeedometer();
+            stopCompass();
+
+            if (type == WIDGET_TIME) {
+                compassTextView = new TextView(requireContext());
+                compassTextView.setTextSize(48);
+                compassTextView.setTypeface(Typeface.DEFAULT_BOLD);
+                compassTextView.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
+                compassTextView.setTextColor(Color.WHITE);
+                compassTextView.setText("---");
+                container.addView(compassTextView);
+                startCompass();
+            }
 
         if (type == WIDGET_SPEED) {
             speedText = new TextView(requireContext());
             speedText.setTextSize(64);
             speedText.setTypeface(Typeface.DEFAULT_BOLD);
             speedText.setText("0 км/ч");
+            speedText.setTextAlignment(View.TEXT_ALIGNMENT_CENTER);
             container.addView(speedText);
             startSpeedometer();
         }
 
         if (type == WIDGET_IMAGE) {
             ImageView img = new ImageView(requireContext());
-            img.setImageResource(R.drawable.my_image);
+            img.setImageResource(R.drawable.image);
             img.setScaleType(ImageView.ScaleType.CENTER_CROP);
             container.addView(img);
         }
@@ -253,7 +291,7 @@ public class HomeScreen extends Fragment {
     }
 
     private void showWidgetChooser() {
-        String[] options = {"Время", "Спидометр", "Картинка"};
+        String[] options = {"Компас", "Спидометр", "Картинка"};
         new AlertDialog.Builder(requireActivity())
                 .setTitle("Выбери виджет")
                 .setItems(options, (dialog, which) -> {
@@ -374,5 +412,102 @@ public class HomeScreen extends Fragment {
         }
         requireActivity().startService(
                 new Intent(requireActivity(), FloatingButtonService.class));
+    }
+
+    private void startClock() {
+        timeRunnable = new Runnable() {
+            @Override
+            public void run() {
+                // Принудительно 24-часовой формат
+                java.text.SimpleDateFormat timeFormat =
+                        new java.text.SimpleDateFormat("HH:mm", java.util.Locale.getDefault());
+                timeView.setText(timeFormat.format(new java.util.Date()));
+                timeHandler.postDelayed(this, 1000);
+
+
+            }
+        };
+        timeHandler.post(timeRunnable);
+    }
+
+    private void stopClock() {
+        if (timeRunnable != null) {
+            timeHandler.removeCallbacks(timeRunnable);
+        }
+    }
+
+    private void startCompass() {
+        if (compassActive) return;
+
+        sensorManager = (SensorManager) requireActivity().getSystemService(Context.SENSOR_SERVICE);
+        if (sensorManager == null) {
+            Toast.makeText(requireContext(), "Сенсоры не доступны", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        accelerometer = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        magnetometer = sensorManager.getDefaultSensor(Sensor.TYPE_MAGNETIC_FIELD);
+
+        if (accelerometer == null || magnetometer == null) {
+            Toast.makeText(requireContext(), "Компас не поддерживается", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        compassListener = new SensorEventListener() {
+            @Override
+            public void onSensorChanged(SensorEvent event) {
+                if (event.sensor.getType() == Sensor.TYPE_ACCELEROMETER) {
+                    System.arraycopy(event.values, 0, gravity, 0, 3);
+                } else if (event.sensor.getType() == Sensor.TYPE_MAGNETIC_FIELD) {
+                    System.arraycopy(event.values, 0, geomagnetic, 0, 3);
+                }
+
+                float[] R = new float[9];
+                float[] I = new float[9];
+                if (SensorManager.getRotationMatrix(R, I, gravity, geomagnetic)) {
+                    float[] orientation = new float[3];
+                    SensorManager.getOrientation(R, orientation);
+                    azimuth = (float) Math.toDegrees(orientation[0]); // азимут в градусах
+                    if (azimuth < 0) azimuth += 360;
+
+                    requireActivity().runOnUiThread(() -> {
+                        if (compassTextView != null) {
+                            compassTextView.setText(Math.round(azimuth) + "° " + getDirectionText(azimuth));
+                        }
+                    });
+                }
+            }
+
+            @Override
+            public void onAccuracyChanged(Sensor sensor, int accuracy) { }
+        };
+
+        sensorManager.registerListener(compassListener, accelerometer, SensorManager.SENSOR_DELAY_UI);
+        sensorManager.registerListener(compassListener, magnetometer, SensorManager.SENSOR_DELAY_UI);
+        compassActive = true;
+    }
+
+    private void stopCompass() {
+        if (!compassActive) return;
+        if (sensorManager != null && compassListener != null) {
+            sensorManager.unregisterListener(compassListener);
+        }
+        compassActive = false;
+    }
+
+    private String getDirectionText(float azimuth) {
+        if (azimuth >= 337.5f || azimuth < 22.5f) return "С";
+        if (azimuth >= 22.5f && azimuth < 67.5f) return "СВ";
+        if (azimuth >= 67.5f && azimuth < 112.5f) return "В";
+        if (azimuth >= 112.5f && azimuth < 157.5f) return "ЮВ";
+        if (azimuth >= 157.5f && azimuth < 202.5f) return "Ю";
+        if (azimuth >= 202.5f && azimuth < 247.5f) return "ЮЗ";
+        if (azimuth >= 247.5f && azimuth < 292.5f) return "З";
+        return "СЗ";
+    }
+
+    private void updateDate() {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd MMM yyyy", Locale.getDefault());
+        dateView.setText(dateFormat.format(new Date()));
     }
 }

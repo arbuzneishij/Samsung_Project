@@ -1,6 +1,11 @@
 package com.example.samsung_project;
 
+import static androidx.core.content.ContentProviderCompat.requireContext;
+
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -8,7 +13,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 public class SettingsActivity extends AppCompatActivity {
 
-    Button btnVolume, btnBrightness, btnThemes, btnPermissions, btnHelp;
+    Button btnVolume, btnBrightness, btnThemes, btnPermissions, btnHelp, btnBack;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -20,30 +25,44 @@ public class SettingsActivity extends AppCompatActivity {
         btnThemes = findViewById(R.id.btnThemes);
         btnPermissions = findViewById(R.id.btnPermissions);
         btnHelp = findViewById(R.id.btnHelp);
+        btnBack = findViewById(R.id.btnBack);
 
-        //Громкость
-        btnVolume.setOnClickListener(v ->
-                Toast.makeText(this, "Открыть настройки громкости", Toast.LENGTH_SHORT).show()
-        );
+        // Громкость - открывает настройки звука
+        btnVolume.setOnClickListener(v -> {
+            Intent intent = new Intent(Settings.ACTION_SOUND_SETTINGS);
+            startActivity(intent);
+        });
 
-        //ркость
-        btnBrightness.setOnClickListener(v ->
-                Toast.makeText(this, "Открыть настройки яркости", Toast.LENGTH_SHORT).show()
-        );
+        // Яркость - открывает настройки дисплея
+        btnBrightness.setOnClickListener(v -> {
+            Intent intent = new Intent(Settings.ACTION_DISPLAY_SETTINGS);
+            startActivity(intent);
+        });
 
-        // Темы
-        btnThemes.setOnClickListener(v ->
-                Toast.makeText(this, "Открыть выбор темы", Toast.LENGTH_SHORT).show()
-        );
+        // Темы - открывает настройки
+        btnThemes.setOnClickListener(v -> {
+            Intent intent = new Intent(Settings.ACTION_DISPLAY_SETTINGS);
+            startActivity(intent);
 
-        // Разрешения
-        btnPermissions.setOnClickListener(v ->
-                Toast.makeText(this, "Открыть разрешения", Toast.LENGTH_SHORT).show()
-        );
+        });
+
+        // Разрешения - открывает настройки разрешений приложения
+        btnPermissions.setOnClickListener(v -> {
+            Intent intent = new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS);
+            intent.setData(android.net.Uri.parse("package:" + getPackageName()));
+            startActivity(intent);
+        });
 
         // Помощь
-        btnHelp.setOnClickListener(v ->
-                Toast.makeText(this, "Открыть помощь", Toast.LENGTH_SHORT).show()
-        );
+        btnHelp.setOnClickListener(v -> {
+            startActivity(new Intent(SettingsActivity.this, HelpActivity.class));
+            finish();
+        });
+
+        // Назад
+        btnBack.setOnClickListener(v -> {
+            startActivity(new Intent(SettingsActivity.this, MainActivity.class));
+            finish();
+        });
     }
 }

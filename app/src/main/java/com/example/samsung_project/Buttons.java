@@ -1,6 +1,7 @@
 package com.example.samsung_project;
 
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -37,11 +38,28 @@ public class Buttons extends Fragment {
             }
         });
 
+        binding.btnApps.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(Intent.ACTION_ALL_APPS);
+
+                startActivity(intent);
+
+            }
+        });
+
+        binding.btnVolume.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                startActivity(new Intent(Settings.ACTION_DATA_USAGE_SETTINGS));
+            }
+        });
+
         binding.btnSettings.setOnClickListener(new View.OnClickListener() {
             @RequiresApi(api = Build.VERSION_CODES.S)
             @Override
             public void onClick(View v) {
-                startActivity(new Intent(Settings.ACTION_APP_OPEN_BY_DEFAULT_SETTINGS));
+                startActivity(new Intent(v.getContext(), SettingsActivity.class));
             }
         });
 
@@ -50,5 +68,6 @@ public class Buttons extends Fragment {
 
 
     }
+
 }
 
