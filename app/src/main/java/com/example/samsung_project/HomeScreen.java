@@ -393,7 +393,6 @@ public class HomeScreen extends Fragment {
                 requireActivity().runOnUiThread(() -> {
                     if (speedText != null) {
                         speedText.setText(((int) finalSpeed) + " км/ч");
-                        speedText.setTextColor(Color.WHITE);
                     }
                 });
                 timeoutHandler.postDelayed(this, 500);

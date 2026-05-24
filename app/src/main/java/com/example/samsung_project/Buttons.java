@@ -1,7 +1,6 @@
 package com.example.samsung_project;
 
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.provider.Settings;
@@ -48,7 +47,7 @@ public class Buttons extends Fragment {
             }
         });
 
-        binding.btnVolume.setOnClickListener(new View.OnClickListener() {
+        binding.btnMobileInternet.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Settings.ACTION_DATA_USAGE_SETTINGS));

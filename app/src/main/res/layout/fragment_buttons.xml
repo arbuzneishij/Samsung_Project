@@ -17,7 +17,7 @@
         android:background="#001122">
 
         <LinearLayout
-            android:id="@+id/action_btn"
+            android:id="@+id/android"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -109,7 +109,7 @@
         <View android:layout_width="1dp" android:layout_height="match_parent" android:layout_marginTop="15dp" android:layout_marginBottom="15dp" android:background="#33FFFFFF" />
 
         <LinearLayout
-            android:id="@+id/btnVolume"
+            android:id="@+id/btnMobileInternet"
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
@@ -122,10 +122,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:gravity="center"
-                android:text="Volume"
+                android:text="Internet"
                 android:textColor="#FFFFFF"
                 android:textSize="10sp"
-                android:drawableTop="@drawable/ic_va"
+                android:drawableTop="@drawable/ic_mi"
                 android:drawablePadding="4dp"
                 android:paddingTop="8dp"/>
         </LinearLayout>
