@@ -8,6 +8,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.fragment.app.Fragment;
 
@@ -19,7 +20,7 @@ public class Buttons extends Fragment {
 
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         binding = FragmentButtonsBinding.inflate(getLayoutInflater());
 
@@ -48,6 +49,7 @@ public class Buttons extends Fragment {
         });
 
         binding.btnMobileInternet.setOnClickListener(new View.OnClickListener() {
+            @RequiresApi(api = Build.VERSION_CODES.P)
             @Override
             public void onClick(View v) {
                 startActivity(new Intent(Settings.ACTION_DATA_USAGE_SETTINGS));

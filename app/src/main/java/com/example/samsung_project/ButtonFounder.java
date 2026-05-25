@@ -38,7 +38,7 @@ public class ButtonFounder {
 
         List<ResolveInfo> list = pm.queryIntentActivities(mainIntent, 0);
 
-        if (list != null && !list.isEmpty()) {
+        if (!list.isEmpty()) {
             ResolveInfo ri = list.get(0);
             String className = ri.activityInfo.name;
             Intent explicit = new Intent();
